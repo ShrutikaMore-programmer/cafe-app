@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Deploy to AWS EC2 via SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/ubuntu
+          
+          # Clone the repo if it's the first run, otherwise pull latest code
+          if [ ! -d "cafe-app" ]; then
+            git clone https://github.com{{ github.repository }}.git cafe-app
+            cd cafe-app
+          else
+            cd cafe-app
+            git pull origin main
+          fi
+          
+          # Build and launch the Docker container
+          docker build -t cafe-image .
+          docker stop cafe-container || true
+          docker rm cafe-container || true
+          docker run -d --name cafe-container -p 8000:8000 cafe-image
