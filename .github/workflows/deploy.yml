@@ -30,7 +30,7 @@ jobs:
           # 2. Delete old project directory to avoid conflicts
           rm -rf cafe-app
           
-          # 3. Clone a completely fresh copy of your repository code (WITH THE FIXED SLASH)
+          # 3. Clone a completely fresh copy of your repository code
           git clone https://github.com{{ github.repository }}.git cafe-app
           cd cafe-app
           
