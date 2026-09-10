@@ -31,7 +31,7 @@ jobs:
           rm -rf cafe-app
           
           # 3. Clone a completely fresh copy of your repository code
-          git clone https://github.com{{ github.repository }}.git cafe-app
+          git clone https://github.com/${{ github.repository }}.git cafe-app
           cd cafe-app
           
           # 4. Build the fresh Docker image and run it
