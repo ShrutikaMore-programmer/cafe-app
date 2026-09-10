@@ -22,15 +22,18 @@ jobs:
         script: |
           cd /home/ubuntu
           
-          # 1. Clean up any existing repository folders to avoid sync issues
+          # 1. Clean up old container and image if they exist
+          docker stop cafe-container || true
+          docker rm cafe-container || true
+          docker rmi cafe-image || true
+          
+          # 2. Delete old project directory to avoid conflicts
           rm -rf cafe-app
           
-          # 2. Clone a completely fresh copy of your code
+          # 3. Clone a completely fresh copy of your repository code
           git clone https://github.com{{ github.repository }}.git cafe-app
           cd cafe-app
           
-          # 3. Build and launch the Docker container
+          # 4. Build the fresh Docker image and run it
           docker build -t cafe-image .
-          docker stop cafe-container || true
-          docker rm cafe-container || true
           docker run -d --name cafe-container -p 8000:8000 cafe-image
