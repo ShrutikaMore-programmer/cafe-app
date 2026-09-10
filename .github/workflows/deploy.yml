@@ -22,16 +22,14 @@ jobs:
         script: |
           cd /home/ubuntu
           
-          # Clone the repo if it's the first run, otherwise pull latest code
-          if [ ! -d "cafe-app" ]; then
-            git clone https://github.com{{ github.repository }}.git cafe-app
-            cd cafe-app
-          else
-            cd cafe-app
-            git pull origin main
-          fi
+          # 1. Clean up any existing repository folders to avoid sync issues
+          rm -rf cafe-app
           
-          # Build and launch the Docker container
+          # 2. Clone a completely fresh copy of your code
+          git clone https://github.com{{ github.repository }}.git cafe-app
+          cd cafe-app
+          
+          # 3. Build and launch the Docker container
           docker build -t cafe-image .
           docker stop cafe-container || true
           docker rm cafe-container || true
